@@ -42,7 +42,7 @@ Al ser una herramienta intuitiva y fácil de usar, brinda a los usuarios la info
 El proyecto está construido con un stack tecnológico moderno y escalable:
 - **Next.js**: Framework de React para aplicaciones web rápidas y optimizadas.
 - **Tailwind CSS**: Framework de diseño para estilos responsivos y personalizables.
-- **TypeScript** *(planificado para futuras implementaciones)*: Para un desarrollo más seguro y con tipado estático.
+- **TypeScript**: Para un desarrollo más seguro y con tipado estático.
 - **Vercel**: Plataforma de despliegue continuo y optimización para aplicaciones web.
 
 ---
