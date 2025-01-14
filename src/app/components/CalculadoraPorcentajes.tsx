@@ -6,6 +6,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
+import { MultiValue } from 'react-select';
 
 export default function CalculadoraPorcentajes() {
   const [montoTotal, setMontoTotal] = useState('')
@@ -13,6 +16,8 @@ export default function CalculadoraPorcentajes() {
   const [montoPorCuota, setMontoPorCuota] = useState<number>(0)
   const [cuotasSeleccionadas, setCuotasSeleccionadas] = useState<string[]>([])
   const [resultado, setResultado] = useState<string | null>(null)
+
+  const animatedComponents = makeAnimated();
 
   // Manejar el cambio en el input para el total de cuotas
   const manejarCambioTotalCuotas = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,45 +31,20 @@ export default function CalculadoraPorcentajes() {
     setMontoPorCuota(isNaN(valor) ? 0 : valor)
   }
 
+  const valoresSeleccionados = cuotasSeleccionadas.map((cuota) => ({
+    value: cuota,
+    label: `Parcela ${cuota}`,
+  }));
 
-  const manejarSeleccion = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const seleccionada = event.target.value; // Obtener el valor seleccionado
-    setCuotasSeleccionadas((prevSeleccionadas) => {
-      if (prevSeleccionadas.includes(seleccionada)) {
-        // Si ya está seleccionada, eliminarla
-        return prevSeleccionadas.filter((cuota) => cuota !== seleccionada);
-      } else {
-        // Si no está seleccionada, agregarla
-        return [...prevSeleccionadas, seleccionada];
-      }
-    });
+  const manejarSeleccion = (seleccionados: MultiValue<{ label: string; value: string }>) => {
+    setCuotasSeleccionadas(seleccionados ? seleccionados.map((op) => op.value) : []);
   };
   
-
-  /* const manejarSeleccion = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const seleccionadas = Array.from(event.target.selectedOptions, (option) => option.value);
-  
-    setCuotasSeleccionadas((prevSeleccionadas) => {
-      // Crear un nuevo conjunto con las selecciones previas y actuales
-      const nuevasSeleccionadas = [...prevSeleccionadas];
-  
-      seleccionadas.forEach((opcion) => {
-        if (!nuevasSeleccionadas.includes(opcion)) {
-          nuevasSeleccionadas.push(opcion); // Agregar si no está en el arreglo
-        }
-      });
-  
-      // Asegurar que solo se mantengan elementos seleccionados actualmente en el <select>
-      return nuevasSeleccionadas.filter((opcion) =>
-        seleccionadas.includes(opcion) || prevSeleccionadas.includes(opcion)
-      );
-    });
-  }; */
-  
+      
   // Generar dinámicamente las opciones del select
   const opcionesCuotas = Array.from({ length: numeroCuotas }, (_, index) => index + 1)
 
-  const calcularMontoRestante = () => {
+ /*  const calcularMontoRestante = () => {
     const total = parseFloat(montoTotal)
 
     if (isNaN(total) || numeroCuotas <= 0 || cuotasSeleccionadas.length === 0) {
@@ -74,7 +54,12 @@ export default function CalculadoraPorcentajes() {
 
     // Cálculo del monto pagado
     const calcularMontoPagado = () => {
-      if (cuotasSeleccionadas.includes("36")) {
+     
+      if (cuotasSeleccionadas.includes(String(numeroCuotas))) {
+        console.log("Estos son los valores que recibio",
+           "Cuotas selecionadas: ",cuotasSeleccionadas,
+            "montoPorCuota: ", montoPorCuota,
+             "numeroCuotas :", numeroCuotas);
         return cuotasSeleccionadas.length * (montoPorCuota - 70 / 100); // Aplica descuento
       }
       return cuotasSeleccionadas.length * montoPorCuota; // Sin descuento
@@ -84,7 +69,40 @@ export default function CalculadoraPorcentajes() {
     const montoRestante = (total + 70*100) - montoPagado
 
     setResultado(`Você pagou $${montoPagado.toFixed(2)}. Valor restante a pagar: $${montoRestante.toFixed(2)}`)
-  }
+  } */
+
+    const calcularMontoRestante = () => {
+      const total = parseFloat(montoTotal);
+    
+      if (isNaN(total) || numeroCuotas <= 0 || cuotasSeleccionadas.length === 0) {
+        setResultado('Por favor, insira valores válidos.');
+        return;
+      }
+    
+      // Verificar si la última cuota está seleccionada
+      const ultimaCuota = String(numeroCuotas);
+          
+      // Calcular el monto pagado
+      const calcularMontoPagado = () => {
+        return cuotasSeleccionadas.reduce((acumulado, cuota) => {
+          if (cuota === ultimaCuota) {
+            // Aplica descuento del 70% en la última cuota
+            return acumulado + montoPorCuota * 0.3; // 30% del monto (descuento aplicado)
+          }
+          // Cuotas normales sin descuento
+          return acumulado + montoPorCuota;
+        }, 0);
+      };
+    
+      const montoPagado = calcularMontoPagado();
+      const montoRestante = (total + 70*100) - montoPagado
+    
+      // Mostrar resultado
+      setResultado(
+        `Você pagou R$${montoPagado.toFixed(2)}. Valor restante a pagar: R$${montoRestante.toFixed(2)}`
+      );
+    };
+    
 
   const LimparButton = () => {
     setMontoTotal('');
@@ -141,31 +159,21 @@ export default function CalculadoraPorcentajes() {
           {numeroCuotas > 0 && (
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="cuotasSeleccionadas">Seleccione as parcelas que deseja pagar</Label>
-              <select
+              
+              <Select
                 id="cuotasSeleccionadas"
-                multiple
-                value={cuotasSeleccionadas}
+                closeMenuOnSelect={false}
+                components={animatedComponents}
+                defaultValue={valoresSeleccionados}
+                isMulti
+                options={opcionesCuotas.map((cuota) => ({
+                  value: cuota.toString(),
+                  label: `Parcela ${cuota}`,
+                }))}
                 onChange={manejarSeleccion}
-                className="border border-gray-300 p-2 rounded w-full h-32"
-              >
-                {opcionesCuotas.map((cuota) => (
-                  <option key={cuota} value={cuota.toString()}>
-                    Parcela {cuota}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {/* Mostrar cuotas seleccionadas */}
-          {cuotasSeleccionadas.length > 0 && (
-            <div className='bg-slate-500'>
-              <h2 className="text-lg font-semibold mb-2">Cuotas seleccionadas:</h2>
-              <ul className="list-disc ml-6">
-                {cuotasSeleccionadas.map((cuota) => (
-                  <li key={cuota}>Parcela {cuota}</li>
-                ))}
-              </ul>
+                className="border border-gray-300 p-2 rounded w-full"
+              />
+                             
             </div>
           )}
 
