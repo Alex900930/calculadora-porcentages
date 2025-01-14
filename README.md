@@ -1,36 +1,117 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+```markdown
+# Calculadora-Porcentagens
+**Calculadora de Porcentajes de Parcelas**
 
-## Getting Started
+---
 
-First, run the development server:
+## Índice
+1. [Descripción](#descripción)
+2. [Problema que Resuelve](#problema-que-resuelve)
+3. [Tecnologías Utilizadas](#tecnologías-utilizadas)
+4. [Características Principales](#características-principales)
+5. [Instalación y Uso](#instalación-y-uso)
+6. [Capturas de Pantalla](#capturas-de-pantalla)
+7. [Contribuciones](#contribuciones)
+8. [Licencia](#licencia)
 
+---
+
+## Descripción
+La **Calculadora de Porcentajes de Parcelas** es una herramienta web desarrollada con **Next.js**. Está diseñada específicamente para ayudar a las personas en Brasil a gestionar sus cuotas de forma estratégica y eficiente. Al implementar las últimas tendencias en desarrollo frontend, este proyecto facilita a los usuarios comprender cómo optimizar sus finanzas personales al priorizar el pago de cuotas finales, reduciendo costos y tiempo total de financiamiento.
+
+---
+
+## Problema que Resuelve
+En Brasil, es común que las personas desconozcan los beneficios de pagar cuotas de financiamiento de forma estratégica. Este desconocimiento puede resultar en:
+
+- **Falta de ahorro financiero** debido a pagos ineficientes.
+- **Prolongación innecesaria** del tiempo total de financiamiento.
+- **Mayores costos totales** al no aprovechar descuentos disponibles.
+
+### ¿Cómo lo soluciona?
+Esta herramienta permite a los usuarios calcular:
+- El tiempo restante para completar sus pagos.
+- El ahorro total potencial al priorizar cuotas finales (hasta un 70 % de descuento en la última cuota).
+- La reducción en el tiempo de financiamiento.
+
+Al ser una herramienta intuitiva y fácil de usar, brinda a los usuarios la información necesaria para tomar decisiones financieras informadas.
+
+---
+
+## Tecnologías Utilizadas
+El proyecto está construido con un stack tecnológico moderno y escalable:
+- **Next.js**: Framework de React para aplicaciones web rápidas y optimizadas.
+- **Tailwind CSS**: Framework de diseño para estilos responsivos y personalizables.
+- **TypeScript**: Para un desarrollo más seguro y con tipado estático.
+- **Vercel**: Plataforma de despliegue continuo y optimización para aplicaciones web.
+
+---
+
+## Características Principales
+- **Selección múltiple de cuotas**: Los usuarios pueden elegir las cuotas que desean pagar primero.
+- **Cálculo dinámico de ahorros**: Muestra en tiempo real los descuentos aplicados al pagar cuotas específicas.
+- **Diseño intuitivo y responsivo**: Totalmente optimizado para dispositivos móviles y de escritorio.
+- **Explicación educativa**: Incluye una sección que detalla cómo funciona el sistema y los beneficios del método propuesto.
+
+---
+
+## Instalación y Uso
+Sigue estos pasos para ejecutar el proyecto localmente:
+
+### Requisitos previos
+- Tener **Node.js** instalado (versión 16 o superior).
+- Tener **npm** o **yarn** configurado.
+
+### Clonación del repositorio
+Clona el repositorio desde GitHub:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/tuusuario/calculadora-parcelas.git
+cd calculadora-parcelas
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Instalación de dependencias
+Usa **npm** o **yarn** para instalar las dependencias:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+npm install
+# o
+yarn install
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Iniciar el proyecto
+Ejecuta el proyecto en modo desarrollo:
 
-## Learn More
+npm run dev
+# o
+yarn dev
 
-To learn more about Next.js, take a look at the following resources:
+Abre tu navegador y visita: **[http://localhost:3000](http://localhost:3000)**.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Capturas de Pantalla
+Agrega imágenes que muestren el funcionamiento de tu aplicación. Ejemplo:
 
-## Deploy on Vercel
+**Página Principal:**
+*(inserta una captura de la página principal aquí)*
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Selección de cuotas y resultados:**
+![CapturaProyecto](https://github.com/user-attachments/assets/81dc5e22-2724-4c83-84bf-ca28b4a61008)
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Contribuciones
+¡Contribuciones son bienvenidas! Si deseas contribuir al proyecto, sigue estos pasos:
+
+1. Haz un fork del repositorio.
+2. Crea una nueva rama para tu funcionalidad:
+   
+   git checkout -b nueva-funcionalidad
+   
+3. Realiza tus cambios y envía un pull request.
+
+¡Gracias por tu interés en mejorar este proyecto!
+
+---
+
+## Licencia
+Este proyecto está bajo la licencia **MIT**. Consulta el archivo [LICENSE](./LICENSE) para más detalles.
+
+---
