@@ -131,6 +131,18 @@ export default function CalculadoraPorcentajes() {
             />
           </div>
 
+           {/* Entrada del monto a pagar */}
+           <div className="flex flex-col space-y-1.5">
+            <Label htmlFor="montoPorCuota">Monto a pagar Mensual</Label>
+            <Input
+              id="montoPorCuota"
+              type="number"
+              placeholder="Insira o monto a pagar mensual"
+              value={montoPorCuota || ''}
+              onChange={manejarMontoPorCuota}
+            />
+          </div>
+
           {/* Entrada del número de cuotas */}
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="numeroCuotas">Número total de parcelas</Label>
@@ -140,18 +152,6 @@ export default function CalculadoraPorcentajes() {
               placeholder="Insira o número total de parcelas"
               value={numeroCuotas || ''}
               onChange={manejarCambioTotalCuotas}
-            />
-          </div>
-
-           {/* Entrada del número de cuotas */}
-           <div className="flex flex-col space-y-1.5">
-            <Label htmlFor="montoPorCuota">Monto a pagar Mensual</Label>
-            <Input
-              id="montoPorCuota"
-              type="number"
-              placeholder="Insira o monto a pagar mensual"
-              value={montoPorCuota || ''}
-              onChange={manejarMontoPorCuota}
             />
           </div>
 
