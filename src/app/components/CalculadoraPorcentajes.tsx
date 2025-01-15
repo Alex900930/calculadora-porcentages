@@ -1,13 +1,14 @@
 'use client'
 
 import { useState } from 'react'
+import './styles.css';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { FaCalculator, FaRedoAlt, FaMoneyBillWave, FaListAlt } from 'react-icons/fa';
 import { Bounce, ToastContainer, toast } from 'react-toastify';
-import './styles.css';
+
 
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
