@@ -5,10 +5,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
+import { FaCalculator, FaRedoAlt, FaMoneyBillWave, FaListAlt } from 'react-icons/fa';
 
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { MultiValue } from 'react-select';
+
+// Definir una interfaz para el resultado del cálculo
+interface ResultadoCalculo {
+  ahorroDinero: number;
+  ahorroTiempo: number;
+  montoRealPago: number;
+}
 
 export default function CalculadoraPorcentajes() {
   const [montoTotal, setMontoTotal] = useState('')
@@ -19,7 +27,6 @@ export default function CalculadoraPorcentajes() {
 
   const animatedComponents = makeAnimated();
 
-  // Manejar el cambio en el input para el total de cuotas
   const manejarCambioTotalCuotas = (event: React.ChangeEvent<HTMLInputElement>) => {
     const valor = parseInt(event.target.value, 10)
     setNumeroCuotas(isNaN(valor) ? 0 : valor)
@@ -31,79 +38,67 @@ export default function CalculadoraPorcentajes() {
     setMontoPorCuota(isNaN(valor) ? 0 : valor)
   }
 
-  const valoresSeleccionados = cuotasSeleccionadas.map((cuota) => ({
-    value: cuota,
-    label: `Parcela ${cuota}`,
-  }));
-
   const manejarSeleccion = (seleccionados: MultiValue<{ label: string; value: string }>) => {
     setCuotasSeleccionadas(seleccionados ? seleccionados.map((op) => op.value) : []);
   };
   
-      
-  // Generar dinámicamente las opciones del select
-  const opcionesCuotas = Array.from({ length: numeroCuotas }, (_, index) => index + 1)
+// Función con tipos definidos
+const calcularAhorro = (
+  montoPorCuota: number,
+): ResultadoCalculo => {
+  // Calcular monto original total (sin descuento) para las dos cuotas
+  const montoOriginalTotal = montoPorCuota * 2;
+  // Calcular monto real que paga ahora (con descuento en la última cuota)
+  const montoRealPago = montoPorCuota + (montoPorCuota * 0.3);
+  // Ahorro en dinero
+  const ahorroDinero = montoOriginalTotal - montoRealPago;
+  // Ahorro en tiempo (número de meses adelantados)
+  const ahorroTiempo = 1; // Solo se adelanta una cuota
+  return { ahorroDinero, ahorroTiempo, montoRealPago };
+};
 
- /*  const calcularMontoRestante = () => {
-    const total = parseFloat(montoTotal)
+// Función principal con tipos definidos
+const calcularMontoRestante = (): void => {
+  const total = parseFloat(montoTotal);
+ 
+  if (isNaN(total) || total <= 0) {
+    setResultado('Por favor, insira um valor total válido.');
+    return;
+  }
+  
+  if (numeroCuotas <= 0) {
+    setResultado('Por favor, insira um número válido de parcelas.');
+    return;
+  }
+  
+  if (montoPorCuota <= 0) {
+    setResultado('Por favor, insira um valor válido para a parcela mensal.');
+    return;
+  }
+  
+  const { ahorroDinero, ahorroTiempo, montoRealPago } = calcularAhorro(
+    montoPorCuota
+  );
+  
+  const cuotasRestantes = numeroCuotas - cuotasSeleccionadas.length;
 
-    if (isNaN(total) || numeroCuotas <= 0 || cuotasSeleccionadas.length === 0) {
-      setResultado('Por favor, insira valores válidos.')
-      return
-    }
+  const totalFinal = (total * 1.7) - montoRealPago;
 
-    // Cálculo del monto pagado
-    const calcularMontoPagado = () => {
-     
-      if (cuotasSeleccionadas.includes(String(numeroCuotas))) {
-        console.log("Estos son los valores que recibio",
-           "Cuotas selecionadas: ",cuotasSeleccionadas,
-            "montoPorCuota: ", montoPorCuota,
-             "numeroCuotas :", numeroCuotas);
-        return cuotasSeleccionadas.length * (montoPorCuota - 70 / 100); // Aplica descuento
-      }
-      return cuotasSeleccionadas.length * montoPorCuota; // Sin descuento
-    };
+  console.log("tota es de ", totalFinal);
+  
+  if (cuotasRestantes > 1) {
+    setResultado(
+      `Você pagou antecipadamente e economizou R$${ahorroDinero.toFixed(2)} e ${ahorroTiempo} mês. 
+      Valor restante a pagar: R$${(totalFinal).toFixed(2)}.`
+    );
+  } else {
+    setResultado(
+      `Você está em dia. Continue aproveitando os descontos ao adiantar parcelas!`
+    );
+  }
+};
 
-    const montoPagado = calcularMontoPagado();
-    const montoRestante = (total + 70*100) - montoPagado
-
-    setResultado(`Você pagou $${montoPagado.toFixed(2)}. Valor restante a pagar: $${montoRestante.toFixed(2)}`)
-  } */
-
-    const calcularMontoRestante = () => {
-      const total = parseFloat(montoTotal);
     
-      if (isNaN(total) || numeroCuotas <= 0 || cuotasSeleccionadas.length === 0) {
-        setResultado('Por favor, insira valores válidos.');
-        return;
-      }
-    
-      // Verificar si la última cuota está seleccionada
-      const ultimaCuota = String(numeroCuotas);
-          
-      // Calcular el monto pagado
-      const calcularMontoPagado = () => {
-        return cuotasSeleccionadas.reduce((acumulado, cuota) => {
-          if (cuota === ultimaCuota) {
-            // Aplica descuento del 70% en la última cuota
-            return acumulado + montoPorCuota * 0.3; // 30% del monto (descuento aplicado)
-          }
-          // Cuotas normales sin descuento
-          return acumulado + montoPorCuota;
-        }, 0);
-      };
-    
-      const montoPagado = calcularMontoPagado();
-      const montoRestante = (total + 70*100) - montoPagado
-    
-      // Mostrar resultado
-      setResultado(
-        `Você pagou R$${montoPagado.toFixed(2)}. Valor restante a pagar: R$${montoRestante.toFixed(2)}`
-      );
-    };
-    
-
   const LimparButton = () => {
     setMontoTotal('');
     setNumeroCuotas(0);
@@ -113,15 +108,21 @@ export default function CalculadoraPorcentajes() {
   }
 
   return (
-    <Card className="w-full max-w-md col-span-2 sm:col-span-1">
-      <CardHeader>
-        <CardTitle>Cálculo de Parcelas</CardTitle>
+    <Card className="w-full max-w-md col-span-2 sm:col-span-1 z-10 shadow-lg rounded-lg border border-gray-200">
+      <CardHeader className=" rounded-t-lg p-4">
+        <CardTitle className="flex items-center gap-2">
+          <FaCalculator />
+          Cálculo de Parcelas
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid w-full items-center gap-4">
           {/* Entrada del valor total */}
           <div className="flex flex-col space-y-1.5">
-            <Label htmlFor="montoTotal">Valor Total</Label>
+            <Label htmlFor="montoTotal" className="flex items-center gap-2">
+              <FaMoneyBillWave />
+              Valor Total
+            </Label>
             <Input
               id="montoTotal"
               type="number"
@@ -131,13 +132,16 @@ export default function CalculadoraPorcentajes() {
             />
           </div>
 
-           {/* Entrada del monto a pagar */}
-           <div className="flex flex-col space-y-1.5">
-            <Label htmlFor="montoPorCuota">Monto a pagar Mensual</Label>
+          {/* Entrada del monto a pagar */}
+          <div className="flex flex-col space-y-1.5">
+            <Label htmlFor="montoPorCuota" className="flex items-center gap-2">
+              <FaMoneyBillWave />
+              Monto a pagar Mensual
+            </Label>
             <Input
               id="montoPorCuota"
               type="number"
-              placeholder="Insira o monto a pagar mensual"
+              placeholder="Insira o monto a pagar mensal"
               value={montoPorCuota || ''}
               onChange={manejarMontoPorCuota}
             />
@@ -145,7 +149,10 @@ export default function CalculadoraPorcentajes() {
 
           {/* Entrada del número de cuotas */}
           <div className="flex flex-col space-y-1.5">
-            <Label htmlFor="numeroCuotas">Número total de parcelas</Label>
+            <Label htmlFor="numeroCuotas" className="flex items-center gap-2">
+              <FaListAlt />
+              Número total de parcelas
+            </Label>
             <Input
               id="numeroCuotas"
               type="number"
@@ -158,31 +165,38 @@ export default function CalculadoraPorcentajes() {
           {/* Select para seleccionar las cuotas */}
           {numeroCuotas > 0 && (
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="cuotasSeleccionadas">Seleccione as parcelas que deseja pagar</Label>
-              
+              <Label htmlFor="cuotasSeleccionadas" className="flex items-center gap-2">
+                <FaListAlt />
+                Seleccione as parcelas que deseja pagar
+              </Label>
+
               <Select
                 id="cuotasSeleccionadas"
                 closeMenuOnSelect={false}
                 components={animatedComponents}
-                defaultValue={valoresSeleccionados}
                 isMulti
-                options={opcionesCuotas.map((cuota) => ({
-                  value: cuota.toString(),
-                  label: `Parcela ${cuota}`,
+                options={Array.from({ length: numeroCuotas }, (_, i) => ({
+                value: (i + 1).toString(),
+                label: `Parcela ${i + 1}`,
                 }))}
-                onChange={manejarSeleccion}
+                onChange={(seleccionados) => manejarSeleccion(seleccionados as MultiValue<{ label: string; value: string }>)}
                 className="border border-gray-300 p-2 rounded w-full"
               />
-                             
+
             </div>
           )}
 
           {/* Botón para calcular */}
-          <Button onClick={calcularMontoRestante}>Calcular</Button>
+          <Button onClick={calcularMontoRestante} className="bg-green-600 hover:bg-green-700">
+            <FaCalculator className="mr-2" />
+            Calcular
+          </Button>
 
           {/* Botón para limpiar */}
-          <Button onClick={LimparButton}>Limpar</Button>
-
+          <Button onClick={LimparButton} className="bg-red-600 hover:bg-red-700">
+            <FaRedoAlt className="mr-2" />
+            Limpar
+          </Button>
 
           {/* Resultado */}
           {resultado && (
