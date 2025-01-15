@@ -15,7 +15,6 @@ export default function Home() {
         <h1 className="text-4xl font-bold mb-8">Calculadora de Porcentagens de Parcelas</h1>
         <TitleComponente />
         <div className="grid grid-cols-2 gap-8">
-          
           <CalculadoraPorcentajes />
           <Dica />
         </div>

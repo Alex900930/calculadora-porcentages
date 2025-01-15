@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { FaCalculator, FaRedoAlt, FaMoneyBillWave, FaListAlt } from 'react-icons/fa';
+import { Bounce, ToastContainer, toast } from 'react-toastify';
 
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
@@ -39,7 +40,23 @@ export default function CalculadoraPorcentajes() {
   }
 
   const manejarSeleccion = (seleccionados: MultiValue<{ label: string; value: string }>) => {
-    setCuotasSeleccionadas(seleccionados ? seleccionados.map((op) => op.value) : []);
+    if (!seleccionados || seleccionados.length === 0) {
+      toast.info('⚠️ Por favor, seleccione al menos una parcela antes de continuar!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+        });
+      return;
+    }
+    
+    // Si hay seleccionados, actualizamos el estado
+    setCuotasSeleccionadas(seleccionados.map((op) => op.value));
   };
   
 // Función con tipos definidos
@@ -62,40 +79,127 @@ const calcularMontoRestante = (): void => {
   const total = parseFloat(montoTotal);
  
   if (isNaN(total) || total <= 0) {
-    setResultado('Por favor, insira um valor total válido.');
+    /* setResultado('Por favor, insira um valor total válido.'); */
+    toast.info('Por favor, insira um valor total válido!', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+      });
     return;
   }
   
   if (numeroCuotas <= 0) {
-    setResultado('Por favor, insira um número válido de parcelas.');
+    /* setResultado('Por favor, insira um número válido de parcelas.'); */
+    toast.info('Por favor, insira um número válido de parcelas!', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+      });
     return;
   }
   
   if (montoPorCuota <= 0) {
-    setResultado('Por favor, insira um valor válido para a parcela mensal.');
+    /* setResultado('Por favor, insira um valor válido para a parcela mensal.'); */
+    toast.info('Por favor, insira um valor válido para a parcela mensal!', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+      });
+    return;
+  }
+
+  if (cuotasSeleccionadas.length <= 0) {
+    /* setResultado('Por favor, insira um valor válido para a parcela mensal.'); */
+    toast.info('⚠️ Por favor, seleccione al menos una parcela antes de continuar!', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+      });
+    return;
+  }
+
+  if (cuotasSeleccionadas.length == 1) {
+  
+    toast.success('Você está em dia!', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+      });
     return;
   }
   
-  const { ahorroDinero, ahorroTiempo, montoRealPago } = calcularAhorro(
-    montoPorCuota
-  );
-  
-  const cuotasRestantes = numeroCuotas - cuotasSeleccionadas.length;
+     // Convertir las cuotas seleccionadas a números para manipulación
+  const cuotasNumeros = cuotasSeleccionadas.map((cuota) => parseInt(cuota, 10));
+  cuotasNumeros.sort((a, b) => a - b); // Ordenar cuotas seleccionadas
 
-  const totalFinal = (total * 1.7) - montoRealPago;
+  // Comprobar si seleccionaron la primera y última cuota
+  if (
+    cuotasNumeros[0] === 1 &&
+    cuotasNumeros[cuotasNumeros.length - 1] === numeroCuotas
+  ) {
+    const { ahorroDinero, ahorroTiempo, montoRealPago } = calcularAhorro(montoPorCuota);
+    const totalFinal = (total * 1.7) - montoRealPago;
 
-  console.log("tota es de ", totalFinal);
-  
-  if (cuotasRestantes > 1) {
-    setResultado(
-      `Você pagou antecipadamente e economizou R$${ahorroDinero.toFixed(2)} e ${ahorroTiempo} mês. 
-      Valor restante a pagar: R$${(totalFinal).toFixed(2)}.`
-    );
+    toast.success(`Você pagou antecipadamente e economizou R$${ahorroDinero.toFixed(2)} e ${ahorroTiempo} mês. 
+      Valor restante a pagar: R$${totalFinal.toFixed(2)}.`, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+      });
+
   } else {
-    setResultado(
-      `Você está em dia. Continue aproveitando os descontos ao adiantar parcelas!`
-    );
+    // Si no seleccionaron la primera y última cuota
+   
+    toast.success(`Não há descontos disponíveis para as parcelas selecionadas. Pague normalmente.`, {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: false,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "colored",
+    transition: Bounce,
+    });
+
   }
+
 };
 
     
@@ -108,7 +212,10 @@ const calcularMontoRestante = (): void => {
   }
 
   return (
-    <Card className="w-full max-w-md col-span-2 sm:col-span-1 z-10 shadow-lg rounded-lg border border-gray-200">
+   
+    <>
+    
+     <Card className="w-full max-w-md col-span-2 sm:col-span-1 z-10 shadow-lg rounded-lg border border-gray-200">
       <CardHeader className=" rounded-t-lg p-4">
         <CardTitle className="flex items-center gap-2">
           <FaCalculator />
@@ -206,6 +313,21 @@ const calcularMontoRestante = (): void => {
           )}
         </div>
       </CardContent>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        transition={Bounce}
+      />
     </Card>
+    
+    </>
   )
 }
