@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { FaCalculator, FaRedoAlt, FaMoneyBillWave, FaListAlt } from 'react-icons/fa';
 import { Bounce, ToastContainer, toast } from 'react-toastify';
+import './styles.css';
 
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
@@ -93,6 +94,22 @@ const calcularMontoRestante = (): void => {
       });
     return;
   }
+
+  if (montoPorCuota <= 0) {
+    /* setResultado('Por favor, insira um valor válido para a parcela mensal.'); */
+    toast.info('Por favor, insira um valor válido para a parcela mensal!', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+      });
+    return;
+  }
   
   if (numeroCuotas <= 0) {
     /* setResultado('Por favor, insira um número válido de parcelas.'); */
@@ -109,42 +126,31 @@ const calcularMontoRestante = (): void => {
       });
     return;
   }
-  
-  if (montoPorCuota <= 0) {
-    /* setResultado('Por favor, insira um valor válido para a parcela mensal.'); */
-    toast.info('Por favor, insira um valor válido para a parcela mensal!', {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: false,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-      transition: Bounce,
-      });
-    return;
-  }
 
+  const totalPagar = (total * 1.7);
+
+  // Calculamos el valor mínimo de cuotas necesarias para que el usuario pueda pagar
+const cuotasMinimas = Math.ceil(totalPagar / numeroCuotas);
+
+if (numeroCuotas < cuotasMinimas) {
+  toast.error(`O número de parcelas deve ser, no mínimo, ${cuotasMinimas}, para que o valor mensal seja válido. 
+    Caso contrário, você pode optar por aumentar o valor mensal ou ajustar o número de parcelas para que o total possa ser pago corretamente.`, {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: false,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "colored",
+    transition: Bounce,
+  });
+  return;
+}
+  
   if (cuotasSeleccionadas.length <= 0) {
     /* setResultado('Por favor, insira um valor válido para a parcela mensal.'); */
     toast.info('⚠️ Por favor, seleccione al menos una parcela antes de continuar!', {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: false,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-      transition: Bounce,
-      });
-    return;
-  }
-
-  if (cuotasSeleccionadas.length == 1) {
-  
-    toast.success('Você está em dia!', {
       position: "top-right",
       autoClose: 5000,
       hideProgressBar: false,
@@ -325,6 +331,7 @@ const calcularMontoRestante = (): void => {
         pauseOnHover
         theme="colored"
         transition={Bounce}
+       className="custom-toast-container"
       />
     </Card>
     
